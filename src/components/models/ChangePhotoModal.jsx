@@ -5,6 +5,7 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
   const [previewUrl, setPreviewUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   if (!isOpen) return null;
 
@@ -52,12 +53,12 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
         reader.onerror = reject;
         reader.readAsDataURL(selectedFile);
       });
-      
+
       const token = localStorage.getItem('token');
-      
+
       console.log('📤 Subiendo foto de perfil...');
-      
-      const response = await fetch('http://localhost:3001/api/auth/profile/photo', {
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile/photo`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -84,9 +85,9 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
 
       // Actualizar localStorage y estado
       const currentUser = JSON.parse(localStorage.getItem('user'));
-      const updatedUser = { 
-        ...currentUser, 
-        foto: data.user.foto 
+      const updatedUser = {
+        ...currentUser,
+        foto: data.user.foto
       };
       localStorage.setItem('user', JSON.stringify(updatedUser));
 
@@ -104,7 +105,7 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
 
     } catch (err) {
       console.error(' Error en upload:', err);
-      
+
       if (err.message.includes('Failed to fetch')) {
         setError('No se pudo conectar al servidor. Verifica que esté corriendo.');
       } else if (err.message.includes('404')) {
@@ -127,10 +128,10 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
 
     try {
       const token = localStorage.getItem('token');
-      
+
       console.log(' Eliminando foto de perfil...');
-      
-      const response = await fetch('http://localhost:3001/api/auth/profile/photo', {
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile/photo`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -158,9 +159,9 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
 
       // Actualizar localStorage y estado
       const currentUser = JSON.parse(localStorage.getItem('user'));
-      const updatedUser = { 
-        ...currentUser, 
-        foto: null 
+      const updatedUser = {
+        ...currentUser,
+        foto: null
       };
       localStorage.setItem('user', JSON.stringify(updatedUser));
 
@@ -174,7 +175,7 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
 
     } catch (err) {
       console.error(' Error eliminando foto:', err);
-      
+
       if (err.message.includes('Failed to fetch')) {
         setError('No se pudo conectar al servidor. Verifica que esté corriendo.');
       } else if (err.message.includes('404')) {
@@ -221,9 +222,9 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
           {/* Foto actual */}
           <div className="flex justify-center mb-4">
             {user?.foto ? (
-              <img 
-                src={user.foto} 
-                alt="Foto de perfil actual" 
+              <img
+                src={user.foto}
+                alt="Foto de perfil actual"
                 className="w-24 h-24 rounded-full object-cover border-4 border-cyan-500"
               />
             ) : (
@@ -239,9 +240,9 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
         {previewUrl && (
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
-              <img 
-                src={previewUrl} 
-                alt="Preview" 
+              <img
+                src={previewUrl}
+                alt="Preview"
                 className="w-24 h-24 rounded-full object-cover border-4 border-green-500"
               />
             </div>
@@ -258,16 +259,16 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 transition-colors">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg className="w-8 h-8 mb-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                 </svg>
                 <p className="mb-2 text-sm text-gray-400">
                   <span className="font-semibold">Haz clic para subir</span> o arrastra y suelta
                 </p>
                 <p className="text-xs text-gray-400">PNG, JPG, GIF (MAX. 5MB)</p>
               </div>
-              <input 
-                type="file" 
-                className="hidden" 
+              <input
+                type="file"
+                className="hidden"
                 accept="image/*"
                 onChange={handleFileSelect}
                 disabled={loading}
@@ -287,7 +288,7 @@ const ChangePhotoModal = ({ isOpen, onClose, user, onPhotoUpdate }) => {
               {loading ? 'Eliminando...' : 'Eliminar Foto'}
             </button>
           )}
-          
+
           <button
             onClick={handleUpload}
             disabled={loading || !selectedFile}

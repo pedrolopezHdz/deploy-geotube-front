@@ -1,6 +1,8 @@
 // HistoryModal.jsx
 import React, { useState, useEffect } from 'react';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 const HistoryModal = ({ isOpen, onClose, userId, token }) => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,12 +16,12 @@ const HistoryModal = ({ isOpen, onClose, userId, token }) => {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/user-history/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/user-history/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setHistory(data);
@@ -40,7 +42,7 @@ const HistoryModal = ({ isOpen, onClose, userId, token }) => {
           <h2 className="text-2xl font-bold text-cyan-400">Historial de Videos Vistos</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">×</button>
         </div>
-        
+
         {loading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>
