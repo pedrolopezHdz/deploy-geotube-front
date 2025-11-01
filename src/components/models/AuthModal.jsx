@@ -23,6 +23,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const backendUrl = process.env.REACT_APP_API_URL;
 
   const passwordRules = {
     length: (pwd) => pwd.length >= 8,
@@ -147,9 +148,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       console.log('✅ Google response received, token length:', response.credential.length);
       console.log('📤 Enviando token al backend...');
 
-      const backendUrl = process.env.REACT_APP_API_URL;
-
-
       const backendResponse = await fetch(`${backendUrl}/api/auth/google`, {
         method: 'POST',
         headers: {
@@ -186,7 +184,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       console.error(' Google auth error:', err);
 
       if (err.message.includes('Failed to fetch')) {
-        setError('No se pudo conectar al servidor. Verifica que esté corriendo en localhost:3001');
+        setError(`No se pudo conectar al servidor. Verifica que esté corriendo en ${backendUrl}`);
       } else if (err.message.includes('404') || err.message.includes('Cannot POST')) {
         setError('Error: La ruta /api/auth/google no existe en el servidor. Verifica el backend.');
       } else {
@@ -239,7 +237,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
 
       console.log(' Enviando datos a:', endpoint, payload);
 
-      const response = await fetch(`http://localhost:3001/api/auth${endpoint}`, {
+      const response = await fetch(`${backendUrl}/api/auth${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
